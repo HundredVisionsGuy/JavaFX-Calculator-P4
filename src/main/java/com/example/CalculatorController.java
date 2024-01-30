@@ -18,7 +18,7 @@ public class CalculatorController {
     @FXML
     private Spinner<Double> tempSpinner;
     SpinnerValueFactory<Double> tempValueFactory = //
-        new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 200.0, 0.0);
+        new SpinnerValueFactory.DoubleSpinnerValueFactory(-100.0, 50.0, 0.0);
     
     @FXML
     private Button calculateButton;
@@ -61,18 +61,32 @@ public class CalculatorController {
     void calculateWindChill() {
         double wind = (double) windSpinner.getValue();
         double temp = (double) tempSpinner.getValue();
+        double windchill = getWindchill(wind, temp);
+        String output = "With a wind of " + wind + ", and a temperature of " + temp;
+        output += " degrees would feel like " + windchill + ".";
+        outputLabel.setText(output);
+    }
 
-        outputLabel.setText("Wind is " + wind + ", and temperature is " + temp);
+    private double getWindchill(double w, double t) {
+        double windchill;
+        if (t == 0 && w == 0) {
+            windchill = 0.0;
+        }
+        else {
+            windchill = 35.74 + 0.6215 * t - 35.75 * Math.pow(w, 0.16) + 0.4275 * t * Math.pow(w, 0.16);
+        }
+        windchill = Math.round(windchill);
+        return windchill;
     }
 
     @FXML
     void changeUnits() {
         if (unitsComboBox.getValue() == "Celsius") {
             windLabel.setText("kph");
-            tempLabel.setText("C");
-        } else {
+            tempLabel.setText("°C");
+        } else if (unitsComboBox.getValue() == "Fahrenheit") {
             windLabel.setText("mph");
-            tempLabel.setText("F");
+            tempLabel.setText("°F");
         }
     }
 }
